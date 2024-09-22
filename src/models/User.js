@@ -22,10 +22,9 @@ const userSchema = Schema(
                 }
             },
         },
-        age: { type: Number, required: true, min: 18 },
+        age: { type: Number, min: 18 },
         gender: {
             type: String,
-            required: true,
             lowercase: true,
             validate(val) {
                 if (!["male", "female", "other"].includes(val)) {
@@ -36,8 +35,6 @@ const userSchema = Schema(
         password: {
             type: String,
             required: true,
-            minlength: 8,
-            maxlength: 15,
             validate(val) {
                 if (!validator.isStrongPassword(val)) {
                     throw new Error("Week password");

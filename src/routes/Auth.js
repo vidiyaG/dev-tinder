@@ -1,16 +1,58 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcrypt");
 const User = require("../models/User");
-router.post("/signup", async (req, res) => {
-    console.log(req.url);
-    const data = req.body;
+const {
+    validateSignupInput,
+    validateLoginInput,
+} = require("../utils/validators");
 
+router.post("/signup", async (req, res) => {
+    const { firstName, lastName, password, email } = req.body;
     try {
-        const user = new User(data);
+        validateSignupInput({ firstName, lastName, password, email });
+        const hashedPwd = await bcrypt.hash(password, +process.env.SALT_ROUNDS);
+        const user = new User({
+            firstName,
+            lastName,
+            email,
+            password: hashedPwd,
+        });
         await user.save();
         res.json({ message: "User created successfully" });
     } catch (error) {
         console.log(error);
+        res.status(500).json({
+            message: error?._message,
+            error: error?.message,
+        });
+    }
+});
+
+router.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        validateLoginInput({ email, password });
+        // const hashedPwd = await bcrypt.hash(password, +process.env.SALT_ROUNDS);
+        const user = await User.findOne({ email: email });
+        console.log(user);
+        if (user) {
+            const result = await bcrypt.compare(password, user?.password);
+            if (result) {
+                res.json({
+                    message: "Login success",
+                });
+            } else {
+                res.status(500).json({
+                    message: "Invalid credentials",
+                });
+            }
+        } else {
+            res.status(500).json({
+                message: "Invalid credentials",
+            });
+        }
+    } catch (error) {
         res.status(500).json({
             message: error?._message,
             error: error?.message,
