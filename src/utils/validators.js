@@ -36,8 +36,23 @@ const validateUpdateProfileData = (data) => {
         throw new Error("Invalid data");
     }
 };
+
+const validateConnectionData = (data) => {
+    if (!data.status) {
+        throw new Error("Status is required");
+    } else if (data.status) {
+        const allowedStatus = ["ignored", "interested", "accepted", "rejected"];
+        const isValid = allowedStatus.includes(data?.status);
+        if (!isValid) {
+            throw new Error("Invalid Status " + data?.status);
+        }
+    } else if (!data.toUserId) {
+        throw new Error("toUserId is required");
+    }
+};
 module.exports = {
     validateSignupInput,
     validateLoginInput,
     validateUpdateProfileData,
+    validateConnectionData,
 };
