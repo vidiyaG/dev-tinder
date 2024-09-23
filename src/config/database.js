@@ -17,7 +17,6 @@ const URI =
 async function run() {
     try {
         await mongoose.connect(URI, {
-            useUnifiedTopology: true,
             connectTimeoutMS: 1000,
         });
         console.log("MongoDB Connected");

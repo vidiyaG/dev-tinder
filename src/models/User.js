@@ -54,5 +54,5 @@ const userSchema = Schema(
     },
     { timestamps: true }
 );
-
+userSchema.methods.getJWTToken = async function () {};
 module.exports = mongoose.model("User", userSchema);

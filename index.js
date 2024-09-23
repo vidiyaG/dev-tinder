@@ -5,8 +5,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const authRouter = require("./src/routes/Auth");
 const userRouter = require("./src/routes/User");
+const cookieParser = require("cookie-parser");
 
 app.use(express.json());
+app.use(cookieParser());
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 

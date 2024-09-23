@@ -19,7 +19,25 @@ const validateLoginInput = (data) => {
         throw new Error("Invalid password");
     }
 };
+
+const validateUpdateProfileData = (data) => {
+    const allowedFieldsToEdit = [
+        "firstName",
+        "lastName",
+        "age",
+        "gender",
+        "imageUrl",
+        "skills",
+    ];
+    const allFieldsValid = Object.keys(data).every((field) =>
+        allowedFieldsToEdit.includes(field)
+    );
+    if (!allFieldsValid) {
+        throw new Error("Invalid data");
+    }
+};
 module.exports = {
     validateSignupInput,
     validateLoginInput,
+    validateUpdateProfileData,
 };

@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const authGuard = require("./AuthGuard");
+const { validateUpdateProfileData } = require("../utils/validators");
 
-router.get("/", async (req, res) => {
+router.get("/", authGuard, async (req, res) => {
     try {
         const users = await User.find({});
         res.json({ users: users });
@@ -14,8 +16,33 @@ router.get("/", async (req, res) => {
         });
     }
 });
+router.get("/profile", authGuard, async (req, res) => {
+    try {
+        res.json(req?.user);
+    } catch (error) {
+        res.status(500).json({
+            message: "Something went wrong",
+            error: error?.message,
+        });
+    }
+});
 
-router.get("/", async (req, res) => {
+router.post("/profile/edit", authGuard, async (req, res) => {
+    try {
+        const user = req.user;
+        const data = req.body;
+        validateUpdateProfileData(data);
+        Object.keys(data).every((key) => (user[key] = data[key]));
+        await user.save();
+        res.json({ message: "Profile updated successfully" });
+    } catch (error) {
+        res.status(500).json({
+            message: "Something went wrong",
+            error: error?.message,
+        });
+    }
+});
+router.get("/", authGuard, async (req, res) => {
     const { userId } = req.query;
     if (!userId) res.status(500).json({ message: "Invalid userId" });
 
@@ -31,7 +58,7 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.delete("/", async (req, res) => {
+router.delete("/", authGuard, async (req, res) => {
     const { userId } = req.query;
     if (!userId) res.status(500).json({ message: "Invalid userId" });
 
@@ -47,7 +74,7 @@ router.delete("/", async (req, res) => {
     }
 });
 
-router.patch("/", async (req, res) => {
+router.patch("/", authGuard, async (req, res) => {
     const data = req.body;
 
     try {
