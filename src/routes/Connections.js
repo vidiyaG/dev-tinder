@@ -128,10 +128,16 @@ router.post("/review/:status/:requestId", authGuard, async (req, res) => {
 
 router.get("/feed", authGuard, async (req, res) => {
     const user = req.user;
-    let { limit, page } = req.query;
     const maxAllowedLimit = 50;
-    limit = limit ? (limit > maxAllowedLimit ? maxAllowedLimit : limit) : 10;
-    offset = ((page || 1) - 1) * limit;
+    const defaultLimit = 10;
+
+    let { limit = defaultLimit, page = 1 } = req.query;
+    limit = parseInt(limit)
+        ? limit > maxAllowedLimit
+            ? maxAllowedLimit
+            : parseInt(limit)
+        : defaultLimit;
+    offset = (parseInt(page) > 0 ? page - 1 : 0) * parseInt(limit);
 
     try {
         // loggedin user should not see the cards of the
