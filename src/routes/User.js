@@ -18,7 +18,11 @@ router.get("/", authGuard, async (req, res) => {
 });
 router.get("/profile", authGuard, async (req, res) => {
     try {
-        res.json(req?.user);
+        if (req.user) {
+            res.json(req?.user);
+        } else {
+            throw new Error("Profile not found");
+        }
     } catch (error) {
         res.status(500).json({
             message: "Something went wrong",

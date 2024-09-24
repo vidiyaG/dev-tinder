@@ -22,7 +22,9 @@ async function run() {
         console.log("MongoDB Connected");
         // .then(() => console.log("MongoDB Connected"))
         // .catch((err) => console.log("Connection Error: ", err));
-    } catch (error) {}
+    } catch (error) {
+        throw new Error("Unable to connect to DB", error);
+    }
 }
 
 module.exports = run;

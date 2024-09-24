@@ -7,6 +7,7 @@ const {
     validateSignupInput,
     validateLoginInput,
 } = require("../utils/validators");
+const authGuard = require("./AuthGuard");
 
 router.post("/signup", async (req, res) => {
     const { firstName, lastName, password, email } = req.body;
@@ -64,7 +65,8 @@ router.post("/login", async (req, res) => {
     }
 });
 
-router.post("/logout", async (req, res) => {
+router.post("/logout", authGuard, async (req, res) => {
+    console.log("LOGOUT", req.user);
     try {
         if (req.user) {
             res.clearCookie(process.env.COOKIE);

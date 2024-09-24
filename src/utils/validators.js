@@ -37,11 +37,15 @@ const validateUpdateProfileData = (data) => {
     }
 };
 
-const validateConnectionData = (data) => {
+const validateConnectionReqData = (data) => {
     if (!data.status) {
         throw new Error("Status is required");
     } else if (data.status) {
-        const allowedStatus = ["ignored", "interested", "accepted", "rejected"];
+        const allowedStatus = [
+            "ignored",
+            "interested",
+            // "accepted", "rejected"
+        ];
         const isValid = allowedStatus.includes(data?.status);
         if (!isValid) {
             throw new Error("Invalid Status " + data?.status);
@@ -50,9 +54,41 @@ const validateConnectionData = (data) => {
         throw new Error("toUserId is required");
     }
 };
+
+const validateConnectionReviewData = (data) => {
+    if (!data.status) {
+        throw new Error("Status is required");
+    } else if (data.status) {
+        const allowedStatus = ["accept", "reject"];
+        const isValid = allowedStatus.includes(data?.status);
+        if (!isValid) {
+            throw new Error("Invalid Status " + data?.status);
+        }
+    } else if (!data.requestId) {
+        throw new Error("requestId is required");
+    }
+};
+
+const CONNECTION_STATUS = Object.freeze({
+    accepted: "accepted",
+    rejected: "rejected",
+    interested: "interested",
+    ignored: "ignored",
+});
+const POPULATE_USER_FIELDS = [
+    "firstName",
+    "lastName",
+    "imageUrl",
+    "age",
+    "gender",
+];
+
 module.exports = {
     validateSignupInput,
     validateLoginInput,
     validateUpdateProfileData,
-    validateConnectionData,
+    validateConnectionReqData,
+    validateConnectionReviewData,
+    CONNECTION_STATUS,
+    POPULATE_USER_FIELDS,
 };
